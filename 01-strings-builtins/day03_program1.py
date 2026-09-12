@@ -1,36 +1,26 @@
-def compress_string(uncompressed: str) -> str:
-    """
-    Replaces consecutive duplicate characters with the character and its count.
-    Returns original string if compression doesn't save space.
-    """
-    if not uncompressed:
-        return ""
+import re
 
-    compressed = []
-    current_char = uncompressed[0]
-    count = 1
+def extract_tags(content:str)->list[str]:
+    
+    #we have a pattern first
+    pattern=r'#\w+'
+    
+    #now themain thing is how we find all 
+    #using our pattern to find from the content
+    raw_tags=re.findall(pattern,content)
+    
+    #now we have to convert it  into set (unordered,No duplicates)
+    unique_tags={tag.lower() for tag in raw_tags}
+    
+    #sorted Unordered set
+    return sorted(list(unique_tags))
 
-    # Loop through string starting from the second character
-    for i in range(1, len(uncompressed)):
-        if uncompressed[i] == current_char:
-            count += 1
-        else:
-            compressed.append(f"{current_char}{count}")
-            current_char = uncompressed[i]
-            count = 1
-
-    # Append the final character group
-    compressed.append(f"{current_char}{count}")
-    result = "".join(compressed)
-
-    # Return original if compressed version is not smaller
-    return result if len(result) < len(uncompressed) else uncompressed
-
-
-# --- Unit Tests ---
 if __name__ == "__main__":
-    test_strings = ["aabcccccaaa", "abcd", "WWWWWWWWWWWWBWWWWWWWWWWWWBBBWWWWWWWWWWWWWWWWWWWWWWWWBWWWWWWWWWWWW"]
-    for text in test_strings:
-        compressed_text = compress_string(text)
-        print(f"Original  ({len(text)} chars) : {text}")
-        print(f"Compressed ({len(compressed_text)} chars): {compressed_text}\n")
+    sample_text="""Building modern web apps with #Python and #FastAPI is fast and efficient! 
+    Check out our new tutorial on #Python backend services and #WebDev tips. 
+    Follow for more #python and #coding updates!
+    """
+    
+    tags=extract_tags(sample_text)
+    print(f"Extracted Tags {len(tags)} unique : {tags}")
+    
